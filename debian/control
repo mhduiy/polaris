@@ -1,0 +1,49 @@
+Source: polaris
+Section: DDE
+Priority: optional
+Maintainer: Deepin Packages Builder <packages@deepin.com>
+Build-Depends:
+ debhelper-compat (= 13),
+ cmake,
+ dde-control-center-dev,
+ libdde-shell-dev (>= 2.0.0),
+ libdtk6core-dev,
+ libdtk6declarative-dev,
+ qml-qt6,
+ qt6-base-dev,
+Standards-Version: 4.6.2
+
+Package: polaris
+Architecture: any
+Depends:
+ dde-control-center,
+ dde-shell (>= 2.0.0),
+ libdtk6declarative,
+ ${misc:Depends},
+ ${shlibs:Depends},
+Recommends: polaris-sensord,
+Description: System monitor for the dde-shell dock
+ Polaris puts live system readings on the taskbar: CPU usage, CPU
+ temperature, memory and swap usage, and the network transfer rate. Clicking
+ the item opens a list of the busiest processes with a button to end them.
+ .
+ Values are read directly from /proc and /sys, so the dock item itself needs no
+ daemon and no privileges. Which readings are shown and how often they refresh
+ is set in the control centre, and stored with DConfig so the dock item and the
+ control centre agree without any service of their own.
+
+Package: polaris-sensord
+Architecture: any
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: Privileged sensor readings for Polaris
+ The kernel publishes some readings to root only - the CPU package power counter
+ in /sys/class/powercap is the one Polaris wanted first. Rather than opening that
+ file to every user, this small service samples it and publishes the results as
+ named values under /run/polaris/sensors, where the dock item picks them up.
+ .
+ It reads and publishes only, is sandboxed to sysfs and /run, and never accepts a
+ path or a command from a client: the set of readings it can hand out is fixed at
+ build time. The dock item works without it and falls back to whatever it can
+ read itself.

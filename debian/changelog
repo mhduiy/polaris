@@ -1,0 +1,29 @@
+polaris (1.0.0) unstable; urgency=medium
+
+  * Initial release: taskbar system monitor showing live CPU usage, CPU
+    temperature, memory and swap usage, and the network transfer rate.
+  * Control centre page for choosing which readings are shown and how often
+    they refresh, stored with DConfig.
+  * Ending a process now checks the target's start time as well as its name and
+    signals through a pidfd, so a recycled pid cannot be hit.
+  * New polaris-sensord package: a small sandboxed service that publishes the
+    readings the kernel keeps to root (the CPU package power counter) as named
+    values under /run/polaris/sensors, for the dock item to pick up.
+  * The graphics card's power draw through NVML, listed next to the cpu package in
+    the panel.
+  * Fan gauges are drawn against the chip's ceiling (fan*_max) or the configured
+    fanScaleRpm, and the fan list is labelled.
+  * Power draw and fan speed from hwmon and the powercap energy counter, each
+    with its own dock-line switch and a card in the detail panel.
+  * Swap has its own bar in the panel instead of a slice of the memory bar, and
+    is listed with its own reading and percentage.
+  * The dock item can draw the history of each reading under its number, so the
+    taskbar shows where a reading is going and not only where it is: numbers with
+    charts under them, or charts with labels only, chosen for the whole line in
+    the control centre. Each chart is scaled to what it measures and is sized
+    from its cells, so the item still cannot jitter.
+  * Clicking the item opens a detail panel: cpu breakdown, per-core bars,
+    memory split, transfer history charts and the busiest processes, in its own
+    layer-shell window that follows the light or dark theme.
+
+ -- Deepin Packages Builder <packages@deepin.com>  Mon, 02 Mar 2026 10:00:00 +0800

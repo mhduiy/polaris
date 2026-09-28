@@ -1,0 +1,11 @@
+build/
+obj-*/
+debian/dde-shell-sysmonitor/
+debian/*.substvars
+debian/*.debhelper*
+debian/debhelper-build-stamp
+debian/files
+debian/.debhelper/
+debian/tmp/
+debian/polaris/
+debian/polaris-sensord/

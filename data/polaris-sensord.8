@@ -1,0 +1,55 @@
+.\" SPDX-License-Identifier: GPL-3.0-or-later
+.TH POLARIS-SENSORD 8 "2026" "polaris" "System Administration"
+.SH NAME
+polaris-sensord \- publish the sensor readings that only root can read
+.SH SYNOPSIS
+.B polaris-sensord
+.RI [ options ]
+.SH DESCRIPTION
+The kernel publishes some readings to root only. The CPU package power counter in
+.IR /sys/class/powercap
+is the one Polaris wanted first: rather than opening that file to every user,
+.B polaris-sensord
+samples it and publishes the result as named values in
+.IR /run/polaris/sensors ,
+where the Polaris dock item reads it.
+.PP
+The file is written atomically, replaced on every sample, and left in place if the
+service stops: the dock item only believes a reading while it is fresh, so a
+stopped service degrades to "no reading" rather than to a stale one.
+.SH OPTIONS
+.TP
+.BI \-\-powercap\-root " path"
+Read the energy counters from somewhere other than
+.IR /sys/class/powercap .
+Intended for testing the service without privileges.
+.TP
+.BI \-\-output " path"
+Write the readings to somewhere other than
+.IR /run/polaris/sensors .
+.SH FILES
+.TP
+.I /run/polaris/sensors
+The published readings, one
+.I key=value
+pair per line, with
+.I time
+in seconds since the epoch. Unknown keys are ignored by readers, so this service
+can publish more readings without older readers having to know about them.
+.SH SECURITY
+The service runs as root and is deliberately narrow. It reads three sysfs files
+and writes one file of its own, and it takes no input from any client: there is no
+socket, no bus name and no configuration to parse, so the set of readings it can
+hand out is fixed at build time. It publishes named values and never accepts a
+path or a command.
+.PP
+Its unit file sets
+.IR NoNewPrivileges ,
+.IR ProtectSystem=strict
+with
+.IR ReadWritePaths=/run/polaris ,
+.IR ProtectHome
+and no network, so it cannot write outside its own directory even if it were
+misconfigured.
+The published readings are not secret — they are power figures — which is why the
+file is world-readable rather than restricted.

@@ -1,0 +1,138 @@
+{
+    "magic": "dsg.config.meta",
+    "version": "1.0",
+    "contents": {
+        "showCpu": {
+            "value": true,
+            "serial": 0,
+            "flags": [],
+            "name": "CPU usage",
+            "name[zh_CN]": "CPU 占用",
+            "description": "Show the CPU usage on the dock item",
+            "description[zh_CN]": "在任务栏上显示 CPU 占用",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "showTemperature": {
+            "value": true,
+            "serial": 0,
+            "flags": [],
+            "name": "CPU temperature",
+            "name[zh_CN]": "CPU 温度",
+            "description": "Show the CPU temperature on the dock item",
+            "description[zh_CN]": "在任务栏上显示 CPU 温度",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "showMemory": {
+            "value": true,
+            "serial": 0,
+            "flags": [],
+            "name": "Memory usage",
+            "name[zh_CN]": "内存占用",
+            "description": "Show the memory usage on the dock item",
+            "description[zh_CN]": "在任务栏上显示内存占用",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "showSwap": {
+            "value": true,
+            "serial": 0,
+            "flags": [],
+            "name": "Swap usage",
+            "name[zh_CN]": "交换分区占用",
+            "description": "Show the swap usage on the dock item",
+            "description[zh_CN]": "在任务栏上显示交换分区占用",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "showNetwork": {
+            "value": true,
+            "serial": 0,
+            "flags": [],
+            "name": "Network throughput",
+            "name[zh_CN]": "网络速率",
+            "description": "Show the download and upload rate on the dock item",
+            "description[zh_CN]": "在任务栏上显示下载与上传速率",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "showPower": {
+            "value": false,
+            "serial": 0,
+            "flags": [],
+            "name": "Power draw",
+            "name[zh_CN]": "功耗",
+            "description": "Show the package power draw on the dock item; the kernel only exposes it to privileged readers on most systems",
+            "description[zh_CN]": "在任务栏上显示整机功耗；多数系统上内核只允许特权用户读取该数据",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "showFan": {
+            "value": false,
+            "serial": 0,
+            "flags": [],
+            "name": "Fan speed",
+            "name[zh_CN]": "风扇转速",
+            "description": "Show the highest fan speed on the dock item",
+            "description[zh_CN]": "在任务栏上显示最高风扇转速",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "dockChartMode": {
+            "value": "off",
+            "serial": 0,
+            "flags": [],
+            "name": "Taskbar charts",
+            "name[zh_CN]": "任务栏折线图",
+            "description": "How the dock item draws its metrics: off (the numbers alone), both (each number with its history under it) or line (the history with its label, no number). Which metrics are drawn is the per-metric switch above",
+            "description[zh_CN]": "任务栏小程序怎么画各项读数：off 只显示数字，both 在数字下面加折线图，line 只画折线图（保留标签）。画哪几项由上面的显示项开关决定",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "refreshIntervalMs": {
+            "value": 2000,
+            "serial": 0,
+            "flags": [],
+            "name": "Refresh interval",
+            "name[zh_CN]": "刷新间隔",
+            "description": "How often the readings are updated, in milliseconds",
+            "description[zh_CN]": "读数更新间隔，单位毫秒",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "fanScaleRpm": {
+            "value": 3000,
+            "serial": 0,
+            "flags": [],
+            "name": "Fan gauge scale",
+            "name[zh_CN]": "风扇量程",
+            "description": "RPM the fan gauges treat as full speed, used when the chip does not report a ceiling",
+            "description[zh_CN]": "风扇转速条的满量程，芯片未提供最高转速时使用",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "processCount": {
+            "value": 8,
+            "serial": 0,
+            "flags": [],
+            "name": "Processes listed",
+            "name[zh_CN]": "进程列表条数",
+            "description": "How many processes the panel lists",
+            "description[zh_CN]": "面板里列出的进程条数",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "processSort": {
+            "value": "cpu",
+            "serial": 0,
+            "flags": [],
+            "name": "Sort processes by",
+            "name[zh_CN]": "进程排序方式",
+            "description": "Whether the process list is ordered by cpu usage (cpu) or by memory (memory)",
+            "description[zh_CN]": "进程列表按 CPU 占用（cpu）还是按内存占用（memory）排序",
+            "permissions": "readwrite",
+            "visibility": "private"
+        }
+    }
+}

@@ -1,0 +1,4 @@
+usr/lib/*/dde-shell/org.deepin.ds.dock.polaris.so
+usr/lib/*/dde-control-center/plugins_v1.1/polaris/
+usr/share/dde-shell/org.deepin.ds.dock.polaris/
+usr/share/dsg/configs/org.deepin.ds.dock.polaris/

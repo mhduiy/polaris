@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Publishes the readings that need privileges to read (the powercap energy
+# counter today) as named values under /run/polaris/sensors. Read-only: no path
+# and no command ever crosses this boundary, so the worst a local user can ask
+# for is a figure they could read anyway on most machines.
+
+[Unit]
+Description=Polaris privileged sensor readings
+After=systemd-modules-load.service
+
+[Service]
+Type=simple
+# Owns /run/polaris and creates it for us, so the service needs no tmpfiles rule.
+RuntimeDirectory=polaris
+RuntimeDirectoryMode=0755
+ExecStart=/usr/libexec/polaris-sensord
+Restart=on-failure
+RestartSec=5
+
+# The whole filesystem is read-only except the one directory this service owns:
+# even a misconfigured path cannot make it write anywhere else.
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/run/polaris
+ProtectHome=true
+PrivateTmp=true
+PrivateNetwork=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX
+SystemCallFilter=@system-service
+
+[Install]
+WantedBy=multi-user.target

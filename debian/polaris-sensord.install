@@ -1,0 +1,3 @@
+usr/libexec/polaris-sensord
+usr/lib/systemd/system/polaris-sensord.service
+usr/share/man/man8/polaris-sensord.8
