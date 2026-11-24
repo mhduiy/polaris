@@ -120,7 +120,8 @@ immediately, with no service in between.
 | `showFan` | `false` | Highest fan speed on the dock item |
 | `showBalance` | `false` | Configured API platform's balance |
 | `fanScaleRpm` | `3000` | RPM the fan gauges treat as full speed, when the chip reports no ceiling |
-| `dockChartMode` | `off` | How the item draws its metrics: `off`, `both` or `line` |
+| `dockStyle` | `label` | How the item lays its metrics out: `label` (one line with metric labels) or `stacked` (visible metrics paired in display order into two rows, separated by rules). Width depends on the font and enabled metrics. Vertical docks keep their existing layout; thin horizontal docks fall back to one row |
+| `dockChartMode` | `off` | How the item draws its metrics: `off`, `both` or `line`. An actual two-row layout shows only numbers; vertical docks and one-row fallbacks retain the chart setting |
 
 The same values can be set from a shell:
 

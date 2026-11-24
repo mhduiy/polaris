@@ -90,14 +90,25 @@
             "permissions": "readwrite",
             "visibility": "private"
         },
+        "dockStyle": {
+            "value": "label",
+            "serial": 0,
+            "flags": [],
+            "name": "Taskbar layout",
+            "name[zh_CN]": "任务栏布局",
+            "description": "How the dock item lays its visible metrics out: label (one line with metric labels) or stacked (two rows paired in display order, separated by rules). Vertical docks keep their existing layout; thin horizontal docks fall back to one row",
+            "description[zh_CN]": "任务栏小程序怎么排布：label 单行显示并带指标标签；stacked 按显示顺序将可见指标两两排成列，分为两行，列间有竖线。竖向任务栏保持原布局；横向高度不足时回退单行",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
         "dockChartMode": {
             "value": "off",
             "serial": 0,
             "flags": [],
             "name": "Taskbar charts",
             "name[zh_CN]": "任务栏折线图",
-            "description": "How the dock item draws its metrics: off (the numbers alone), both (each number with its history under it) or line (the history with its label, no number). Which metrics are drawn is the per-metric switch above",
-            "description[zh_CN]": "任务栏小程序怎么画各项读数：off 只显示数字，both 在数字下面加折线图，line 只画折线图（保留标签）。画哪几项由上面的显示项开关决定",
+            "description": "How the dock item draws its metrics: off (the numbers alone), both (each number with its history under it) or line (the history with its label, no number). Which metrics are drawn is the per-metric switch above; an actual two-row layout shows only numbers. Vertical docks and one-row fallbacks retain the chart setting",
+            "description[zh_CN]": "任务栏小程序怎么画各项读数：off 只显示数字，both 在数字下面加折线图，line 只画折线图（保留标签）。画哪几项由上面的显示项开关决定；实际两行布局只显示数字，竖向任务栏或单行回退时仍按此设置显示",
             "permissions": "readwrite",
             "visibility": "private"
         },

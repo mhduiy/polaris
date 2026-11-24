@@ -57,6 +57,9 @@ class PolarisApplet : public DApplet
     // How the dock item draws its metrics: "off", "both" or "line". The history
     // it draws comes from the same per-metric switches as the numbers.
     Q_PROPERTY(QString dockChartMode READ dockChartMode NOTIFY settingsChanged FINAL)
+    // How the dock item lays its metrics out: "label" (one line with labels) or
+    // "stacked" (two rows on a horizontal dock when there is enough height).
+    Q_PROPERTY(QString dockStyle READ dockStyle NOTIFY settingsChanged FINAL)
 
     // The detail panel behind a click: where the cpu time went, what the memory
     // is spent on, how the machine is doing, and the recent history the charts
@@ -157,6 +160,7 @@ public:
     int fanMaximum() const { return m_fanMaximum; }
     int fanCeiling() const { return m_fanCeiling; }
     QString dockChartMode() const { return m_dockChartMode; }
+    QString dockStyle() const { return m_dockStyle; }
     int fanScaleRpm() const { return m_fanScaleRpm; }
     QVariantList powerReadings() const { return m_powerReadings; }
     QVariantList powerHistory() const { return m_powerHistory.values(); }
@@ -264,6 +268,8 @@ private:
     bool m_showFan = false;
     /// "off", "both" or "line" — how the dock item draws its metrics.
     QString m_dockChartMode = QStringLiteral("off");
+    /// "label" or "stacked" — how the dock item lays its metrics out.
+    QString m_dockStyle = QStringLiteral("label");
     int m_refreshIntervalMs = 2000;
     int m_processCount = 8;
     int m_fanScaleRpm = 3000;

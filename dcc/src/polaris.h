@@ -32,6 +32,7 @@ class Polaris : public QObject
     Q_PROPERTY(bool showFan READ showFan NOTIFY showFanChanged)
     Q_PROPERTY(bool showBalance READ showBalance NOTIFY showBalanceChanged)
     Q_PROPERTY(QString dockChartMode READ dockChartMode NOTIFY dockChartModeChanged)
+    Q_PROPERTY(QString dockStyle READ dockStyle NOTIFY dockStyleChanged)
     Q_PROPERTY(int refreshIntervalMs READ refreshIntervalMs NOTIFY refreshIntervalMsChanged)
     Q_PROPERTY(int fanScaleRpm READ fanScaleRpm NOTIFY fanScaleRpmChanged)
     Q_PROPERTY(int processCount READ processCount NOTIFY processCountChanged)
@@ -49,6 +50,7 @@ public:
     bool showFan() const { return m_showFan; }
     bool showBalance() const { return m_showBalance; }
     QString dockChartMode() const { return m_dockChartMode; }
+    QString dockStyle() const { return m_dockStyle; }
     int refreshIntervalMs() const { return m_refreshIntervalMs; }
     int fanScaleRpm() const { return m_fanScaleRpm; }
     int processCount() const { return m_processCount; }
@@ -75,6 +77,8 @@ public:
     Q_INVOKABLE void setProcessSort(const QString &sort);
     /** "off", "both" or "line"; anything else is ignored. */
     Q_INVOKABLE void setDockChartMode(const QString &mode);
+    /** "label" or "stacked"; anything else is ignored. */
+    Q_INVOKABLE void setDockStyle(const QString &style);
 
 Q_SIGNALS:
     void showCpuChanged(bool show);
@@ -86,6 +90,7 @@ Q_SIGNALS:
     void showFanChanged(bool show);
     void showBalanceChanged(bool show);
     void dockChartModeChanged(const QString &mode);
+    void dockStyleChanged(const QString &style);
     void refreshIntervalMsChanged(int intervalMs);
     void processCountChanged(int count);
     void fanScaleRpmChanged(int rpm);
@@ -118,6 +123,7 @@ private:
     bool m_showFan = false;
     bool m_showBalance = false;
     QString m_dockChartMode = QStringLiteral("off");
+    QString m_dockStyle = QStringLiteral("label");
     int m_refreshIntervalMs = 2000;
     int m_processCount = 8;
     int m_fanScaleRpm = 3000;

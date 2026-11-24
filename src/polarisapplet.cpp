@@ -42,6 +42,11 @@ constexpr int kMinFanScaleRpm = 500;
 constexpr int kMaxFanScaleRpm = 10000;
 /// How the dock item draws its metrics, spelled the way the config stores them.
 const QStringList kChartModes{QStringLiteral("off"), QStringLiteral("both"), QStringLiteral("line")};
+/// How the dock item lays its metrics out, spelled the way the config stores it.
+const QStringList kDockStyles{QStringLiteral("label"), QStringLiteral("stacked")};
+/// The value the item falls back to when the key is missing or says something it
+/// does not know. Must be the schema's default, which the README documents too.
+const QString kDefaultDockStyle = QStringLiteral("label");
 constexpr int kDefaultProcessCount = 8;
 constexpr int kMinProcessCount = 3;
 constexpr int kMaxProcessCount = 30;
@@ -139,13 +144,17 @@ void PolarisApplet::readSettings()
     // asked for, so it falls back to the plain numbers.
     const QString chartWanted = value(QStringLiteral("dockChartMode"), kChartModes.first()).toString();
     const QString dockChartMode = kChartModes.contains(chartWanted) ? chartWanted : kChartModes.first();
+    // Same for the layout: an unrecognised value falls back to the single line,
+    // which is what the schema calls the default.
+    const QString styleWanted = value(QStringLiteral("dockStyle"), kDefaultDockStyle).toString();
+    const QString dockStyle = kDockStyles.contains(styleWanted) ? styleWanted : kDefaultDockStyle;
 
     const bool fanScaleDiffers = fanScale != m_fanScaleRpm;
     const bool settingsDiffer = showCpu != m_showCpu || showTemperature != m_showTemperature
             || showMemory != m_showMemory || showSwap != m_showSwap || showNetwork != m_showNetwork
             || showPower != m_showPower || showFan != m_showFan || showBalance != m_showBalance
             || sort != m_processSort
-            || dockChartMode != m_dockChartMode || fanScaleDiffers;
+            || dockChartMode != m_dockChartMode || dockStyle != m_dockStyle || fanScaleDiffers;
     m_showCpu = showCpu;
     m_showTemperature = showTemperature;
     m_showMemory = showMemory;
@@ -157,6 +166,7 @@ void PolarisApplet::readSettings()
     m_balance.setEnabled(showBalance);
     m_processCount = processCount;
     m_dockChartMode = dockChartMode;
+    m_dockStyle = dockStyle;
     m_fanScaleRpm = fanScale;
 
     if (sort != m_processSort) {

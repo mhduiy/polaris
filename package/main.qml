@@ -58,6 +58,7 @@ AppletItem {
 
         // The histories the line draws when the settings ask for charts.
         chartMode: Applet.dockChartMode
+        style: Applet.dockStyle
         cpuHistory: Applet.cpuHistory
         temperatureHistory: Applet.temperatureHistory
         memoryHistory: Applet.memoryHistory

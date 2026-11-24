@@ -24,6 +24,7 @@ const QString kProcessCountKey = QStringLiteral("processCount");
 const QString kFanScaleKey = QStringLiteral("fanScaleRpm");
 const QString kProcessSortKey = QStringLiteral("processSort");
 const QString kDockChartModeKey = QStringLiteral("dockChartMode");
+const QString kDockStyleKey = QStringLiteral("dockStyle");
 
 // Ranges the schema documents; the dock applet cannot work outside them, so a
 // value that somehow arrives from QML is clamped rather than persisted as is.
@@ -34,6 +35,10 @@ constexpr int kProcessCountMax = 30;
 constexpr int kFanScaleMin = 500;
 constexpr int kFanScaleMax = 10000;
 const QStringList kChartModes{QStringLiteral("off"), QStringLiteral("both"), QStringLiteral("line")};
+const QStringList kDockStyles{QStringLiteral("label"), QStringLiteral("stacked")};
+// The value the dock item falls back to; must be the schema's default, and the
+// applet spells it the same way.
+const QString kDefaultDockStyle = QStringLiteral("label");
 
 QVariantMap publicBalanceConfig(const polaris::BalanceConfig &c)
 {
@@ -77,6 +82,7 @@ void Polaris::reload()
     m_fanScaleRpm = configValue(kFanScaleKey, 3000).toInt();
     m_processSort = configValue(kProcessSortKey, QStringLiteral("cpu")).toString();
     m_dockChartMode = configValue(kDockChartModeKey, QStringLiteral("off")).toString();
+    m_dockStyle = configValue(kDockStyleKey, kDefaultDockStyle).toString();
 
     Q_EMIT showCpuChanged(m_showCpu);
     Q_EMIT showTemperatureChanged(m_showTemperature);
@@ -91,6 +97,7 @@ void Polaris::reload()
     Q_EMIT fanScaleRpmChanged(m_fanScaleRpm);
     Q_EMIT processSortChanged(m_processSort);
     Q_EMIT dockChartModeChanged(m_dockChartMode);
+    Q_EMIT dockStyleChanged(m_dockStyle);
 }
 
 bool Polaris::configKeyAvailable(const QString &key) const
@@ -222,6 +229,13 @@ void Polaris::setDockChartMode(const QString &mode)
     if (!kChartModes.contains(mode))
         return;
     writeConfig(kDockChartModeKey, mode);
+}
+
+void Polaris::setDockStyle(const QString &style)
+{
+    if (!kDockStyles.contains(style))
+        return;
+    writeConfig(kDockStyleKey, style);
 }
 
 DCC_FACTORY_CLASS(Polaris)

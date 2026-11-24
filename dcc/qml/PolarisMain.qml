@@ -353,11 +353,38 @@ DccObject {
     }
 
     DccObject {
+        name: "dockStyle"
+        parentName: "polaris"
+        displayName: qsTr("任务栏布局")
+        description: qsTr("两行显示按顺序将可见指标两两排成列，列间有分隔线；宽度取决于字体和显示项。实际两行时只显示数字。竖向任务栏保持原布局，横向高度不足时回退单行，这两种情况仍按折线图设置显示。改完任务栏立即生效")
+        weight: 26
+        backgroundType: DccObject.Normal
+        pageType: DccObject.Editor
+        page: D.ComboBox {
+            id: styleCombo
+            flat: true
+            // Single line first, so a value the applet does not recognise is shown
+            // as the layout it actually falls back to.
+            model: [qsTr("单行显示（带标签）"), qsTr("两行显示")]
+            readonly property var modes: ["label", "stacked"]
+            currentIndex: Math.max(0, modes.indexOf(dccData.dockStyle))
+            onActivated: index => dccData.setDockStyle(modes[index])
+
+            Connections {
+                target: dccData
+                function onDockStyleChanged() {
+                    styleCombo.currentIndex = Math.max(0, styleCombo.modes.indexOf(dccData.dockStyle))
+                }
+            }
+        }
+    }
+
+    DccObject {
         name: "dockChartMode"
         parentName: "polaris"
         displayName: qsTr("任务栏折线图")
-        description: qsTr("任务栏小程序怎么画：只显示数字 / 数字加折线图 / 只画折线图。画哪几项由上面的显示项开关决定，改完任务栏立即生效")
-        weight: 26
+        description: qsTr("任务栏小程序怎么画：只显示数字 / 数字加折线图 / 只画折线图。画哪几项由上面的显示项开关决定，改完任务栏立即生效。实际两行布局只显示数字；竖向任务栏或单行回退时仍按此设置显示")
+        weight: 27
         backgroundType: DccObject.Normal
         pageType: DccObject.Editor
         page: D.ComboBox {
@@ -415,7 +442,7 @@ DccObject {
         parentName: "polaris"
         displayName: qsTr("风扇量程")
         description: qsTr("风扇转速条的满量程；芯片没报最高转速时按这个值计算")
-        weight: 26
+        weight: 28
         backgroundType: DccObject.Normal
         pageType: DccObject.Editor
         page: D.SpinBox {
