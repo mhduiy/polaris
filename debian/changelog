@@ -4,6 +4,8 @@ polaris (1.1.0) unstable; urgency=medium
     The default single-row layout is unchanged.
   * Align labels and values within each pair of visible metrics. The two-row
     layout shows numbers without charts and falls back to one row on thin docks.
+  * Make the network-counter test independent of host NICs outside the
+    build namespace, and declare the QML modules needed by the layout tests.
 
  -- zhangkun <zhangkun2@uniontech.com>  Tue, 24 Nov 2026 13:40:44 +0800
 

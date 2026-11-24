@@ -10,6 +10,13 @@ Build-Depends:
  libdtk6core-dev,
  libdtk6declarative-dev,
  qml-qt6,
+ qml6-module-qtqml,
+ qml6-module-qtqml-models,
+ qml6-module-qtqml-workerscript,
+ qml6-module-qtquick,
+ qml6-module-qtquick-controls,
+ qml6-module-qtquick-templates,
+ qml6-module-qtquick-window,
  qt6-base-dev,
 Standards-Version: 4.6.2
 

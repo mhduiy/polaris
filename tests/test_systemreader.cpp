@@ -184,34 +184,27 @@ int main()
     CHECK(polaris::isNotLoopback("eth0"));
     CHECK(!polaris::isHardwareInterface("no-such-interface-42"));
 
-    // Cross-check the default filter against the real machine. The interfaces it
-    // sums must be exactly the driver-bound ones, so the same bytes read back
-    // from sysfs — a moment later, hence never fewer — are the ceiling. This is
-    // the check that caught tailscale0 being counted on top of enp5s0.
+    // A build chroot can see host NICs in sysfs but only loopback in /proc.
+    // Check the default selection against the same snapshot, not all of sysfs.
     const QByteArray realNet = readFile("/proc/net/dev");
     CHECK(!realNet.isEmpty());
-    const auto realCounters = polaris::parseNetDev(realNet);
+    const auto hardware = polaris::parseNetDev(realNet, [](const QString &name) {
+        return name != QLatin1String("lo")
+                && QFile::exists(QStringLiteral("/sys/class/net/%1/device").arg(name));
+    });
+    const auto expected = hardware.interfaces > 0 ? hardware : polaris::parseNetDev(realNet, polaris::isNotLoopback);
+    const auto actual = polaris::parseNetDev(realNet);
+    CHECK(actual.interfaces == expected.interfaces);
+    CHECK(actual.rxBytes == expected.rxBytes);
+    CHECK(actual.txBytes == expected.txBytes);
 
-    quint64 hardwareBytes = 0;
-    const QDir netClass(QStringLiteral("/sys/class/net"));
-    const auto realNames = netClass.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-    for (const QString &name : realNames) {
-        if (!polaris::isHardwareInterface(name))
-            continue;
-        QFile rxFile(QStringLiteral("/sys/class/net/%1/statistics/rx_bytes").arg(name));
-        if (!rxFile.open(QIODevice::ReadOnly))
-            continue;
-        hardwareBytes += QString::fromLatin1(rxFile.readAll()).trimmed().toULongLong();
-    }
-
-    if (realCounters.interfaces > 0) {
-        CHECK(hardwareBytes > 0);
-        CHECK(realCounters.rxBytes <= hardwareBytes);
-    } else {
-        // No driver-bound interface on this machine: the reader falls back to
-        // everything but loopback rather than reporting no traffic at all.
-        CHECK(hardwareBytes == 0);
-    }
+    // The fixture name exceeds Linux's 15-byte interface name limit, so this
+    // exercises fallback even on a machine with hardware interfaces.
+    const auto fallback = polaris::parseNetDev("lo: 900 0 0 0 0 0 0 0 800\n"
+                                               "polaris-fixture0: 120 0 0 0 0 0 0 0 30\n");
+    CHECK(fallback.interfaces == 1);
+    CHECK(fallback.rxBytes == 120);
+    CHECK(fallback.txBytes == 30);
 
     // Per-process counters are only trustworthy against a sample taken close
     // enough in time: dividing a long idle gap by one interval would be nonsense.
