@@ -1,6 +1,6 @@
 {
     "Plugin": {
-        "Version": "1.0",
+        "Version": "1.1",
         "Id": "org.deepin.ds.dock.polaris",
         "Url": "main.qml",
         "Parent": "org.deepin.ds.dock",
