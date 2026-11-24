@@ -6,6 +6,8 @@ polaris (1.1.0) unstable; urgency=medium
     layout shows numbers without charts and falls back to one row on thin docks.
   * Make the network-counter test independent of host NICs outside the
     build namespace, and declare the QML modules needed by the layout tests.
+  * Keep charts and readings within the width of a vertical dock, even when
+    the system font needs a wider value cell.
 
  -- zhangkun <zhangkun2@uniontech.com>  Tue, 24 Nov 2026 13:40:44 +0800
 

@@ -109,10 +109,10 @@ Item {
     readonly property int chartHeight: Math.max(12, Math.min(34, Math.round(root.dockSize * 0.42)))
     // A trend has to be long enough to read its shape from: roughly a dock's
     // thickness and a quarter, about as wide as the label and the number it
-    // follows. A vertical dock is only dockSize wide, so there the chart takes the
-    // width of a value cell instead, which keeps it inside the dock.
+    // follows. A vertical chart follows the value cell, but even its preferred
+    // minimum must yield to the width of the dock.
     readonly property int chartWidth: root.vertical
-                                      ? Math.max(24, Math.round(root.valueWidth))
+                                      ? Math.min(root.dockSize, Math.max(24, root.valueWidth))
                                       : Math.max(28, Math.round(root.dockSize * 1.25))
     /// Between a number and its chart.
     readonly property int chartGap: 4
@@ -264,8 +264,10 @@ Item {
         text: "100℃"
     }
 
-    readonly property real valueWidth: Math.ceil(Math.max(percentMetrics.advanceWidth,
-                                                          temperatureMetrics.advanceWidth))
+    readonly property int valueWidth: {
+        const preferred = Math.ceil(Math.max(percentMetrics.advanceWidth, temperatureMetrics.advanceWidth))
+        return root.vertical ? Math.min(root.dockSize, preferred) : preferred
+    }
 
     TextMetrics {
         id: rateMetrics
@@ -521,6 +523,7 @@ Item {
         property bool stackColumnStart: false
 
         readonly property bool chartBeside: !root.vertical
+        readonly property bool fitText: root.vertical || group.fitValue
 
         implicitWidth: group.chartBeside
                        ? cells.width + (group.showChart ? root.chartGap + root.chartWidth : 0)
@@ -568,11 +571,11 @@ Item {
                 width: group.valueWidth
                 horizontalAlignment: Text.AlignRight
                 font.pixelSize: group.fontSize
-                height: group.fitValue ? Math.ceil(balanceFont.height) : implicitHeight
+                height: group.fitText ? Math.ceil(balanceFont.height) : implicitHeight
                 verticalAlignment: Text.AlignVCenter
-                fontSizeMode: group.fitValue ? Text.HorizontalFit : Text.FixedSize
+                fontSizeMode: group.fitText ? Text.HorizontalFit : Text.FixedSize
                 minimumPixelSize: 8
-                elide: group.fitValue ? Text.ElideRight : Text.ElideNone
+                elide: group.fitText ? Text.ElideRight : Text.ElideNone
                 color: group.valueColor
             }
         }

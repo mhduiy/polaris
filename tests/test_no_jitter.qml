@@ -100,7 +100,7 @@ Item {
 
     MonitorItem {
         id: verticalSmallest
-        dockSize: 48
+        dockSize: 28
         vertical: true
         cpuUsage: 0.0
         cpuTemperature: 0
@@ -112,7 +112,7 @@ Item {
 
     MonitorItem {
         id: verticalLargest
-        dockSize: 48
+        dockSize: 28
         vertical: true
         cpuUsage: 1.0
         cpuTemperature: 100
@@ -411,6 +411,7 @@ Item {
             // clipped by the item.
             const items = [["smallest", smallest], ["largest", largest],
                            ["chartSmallest", chartSmallest], ["chartLargest", chartLargest],
+                           ["verticalLargest", verticalLargest],
                            ["lineLargest", lineLargest], ["verticalChartsFull", verticalChartsFull],
                            ["smallDock", smallDock], ["largeDock", largeDock]]
             for (const entry of items) {
