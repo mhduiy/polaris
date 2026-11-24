@@ -23,6 +23,49 @@ Item {
         }
     }
 
+    /// The Grid that holds the metrics, so the stacked columns can be measured.
+    function gridOf(item) {
+        for (let i = 0; i < item.children.length; ++i) {
+            if (item.children[i].columns !== undefined)
+                return item.children[i]
+        }
+        return null
+    }
+
+    /// The visible cells of a stacked item, in the order the Grid fills them.
+    function cellsOf(item) {
+        const grid = gridOf(item)
+        const cells = []
+        if (!grid)
+            return cells
+        for (let i = 0; i < grid.children.length; ++i) {
+            if (grid.children[i].visible)
+                cells.push(grid.children[i])
+        }
+        return cells
+    }
+
+    /// Both cells share label and value widths; only the top draws a column rule.
+    function checkStackedColumns(item, name) {
+        const cells = cellsOf(item)
+        for (let i = 0; i < cells.length; i += 2) {
+            const top = cells[i]
+            check(top.stackColumnStart === (i > 0),
+                  name + ": the column rule is on the wrong cell at " + i)
+            if (i + 1 === cells.length)
+                continue
+            const bottom = cells[i + 1]
+            check(top.labelWidth > 0 && top.labelWidth === bottom.labelWidth,
+                  name + ": a stacked column is ragged at " + i + ": "
+                  + top.labelWidth + " / " + bottom.labelWidth)
+            check(top.valueWidth === bottom.valueWidth && top.x === bottom.x && top.width === bottom.width,
+                  name + ": the numbers have different right edges at " + i + ": "
+                  + top.width + " / " + bottom.width)
+            check(top.y < bottom.y, name + ": a stacked pair is not laid out top to bottom")
+            check(!bottom.stackColumnStart, name + ": the bottom cell draws a column rule at " + i)
+        }
+    }
+
     MonitorItem {
         id: smallest
         dockSize: 48
@@ -213,6 +256,89 @@ Item {
         balance: balanceLoaded.balance
     }
 
+    // The stacked layout wraps the same metrics onto two rows; it must be as
+    // steady as the single line, and it must stay inside the taskbar it is given.
+    MonitorItem {
+        id: stackedSmallest
+        dockSize: 48
+        style: "stacked"
+        cpuUsage: 0.0
+        cpuTemperature: 0
+        memoryUsage: 0.0
+        swapUsage: 0.0
+        netDownloadRate: 0
+        netUploadRate: 0
+    }
+
+    MonitorItem {
+        id: stackedLargest
+        dockSize: 48
+        style: "stacked"
+        cpuUsage: 1.0
+        cpuTemperature: 100
+        memoryUsage: 1.0
+        swapUsage: 1.0
+        netDownloadRate: 999.9 * 1000 * 1000
+        netUploadRate: 999.9 * 1000 * 1000
+    }
+
+    MonitorItem {
+        id: singleLine
+        dockSize: 48
+        style: "label"
+    }
+
+    // Measure the largest single-line font: one line fits the fallback layout,
+    // while two leave enough height for stacked text, regardless of font family.
+    TextMetrics {
+        id: dockLineMetrics
+        font.pixelSize: largeDock.fontSize
+        text: "100%"
+    }
+
+    MonitorItem {
+        id: stackedFits
+        dockSize: 2 * Math.ceil(dockLineMetrics.boundingRect.height)
+        style: "stacked"
+    }
+
+    MonitorItem {
+        id: stackedTooThin
+        dockSize: Math.ceil(dockLineMetrics.boundingRect.height)
+        style: "stacked"
+    }
+
+    // A stacked line has no room for charts, but the numbers still have to be
+    // drawn: asking for the chart-only line must not leave the item empty.
+    MonitorItem {
+        id: stackedChartOnly
+        dockSize: 48
+        style: "stacked"
+        chartMode: "line"
+    }
+
+    // Switching metrics off re-pairs the columns (here power ends up above the
+    // balance), and a re-paired column has to line up as well as a declared one.
+    MonitorItem {
+        id: stackedRepaired
+        dockSize: 48
+        style: "stacked"
+        showMemory: false
+        showSwap: false
+        showNetwork: false
+        showPower: true
+        showBalance: true
+        balance: balanceLoaded.balance
+    }
+
+    // Hiding one metric pairs swap with download, and leaves upload on its own.
+    MonitorItem {
+        id: stackedMixed
+        dockSize: 48
+        style: "stacked"
+        showCpu: false
+    }
+
     // Nothing may leave the process alive: ctest would wait for it forever.
     Timer {
         interval: 10000
@@ -297,6 +423,31 @@ Item {
                       name + " draws taller than it is: " + Math.ceil(item.childrenRect.height)
                       + " > " + item.implicitHeight)
             }
+
+            // The stacked layout stays steady and leaves more taskbar width free.
+            check(stackedSmallest.implicitWidth === stackedLargest.implicitWidth,
+                  "the stacked line follows its values: " + stackedSmallest.implicitWidth + " / "
+                  + stackedLargest.implicitWidth)
+            check(stackedSmallest.stacked && !singleLine.stacked,
+                  "the style setting does not reach the layout")
+            check(stackedSmallest.implicitWidth < singleLine.implicitWidth,
+                  "the stacked line is not narrower than the labelled one: "
+                  + stackedSmallest.implicitWidth + " / " + singleLine.implicitWidth)
+            check(stackedFits.stacked && stackedFits.childrenRect.height <= stackedFits.implicitHeight,
+                  "the stacked line overflows its measured taskbar height")
+            check(!stackedTooThin.stacked
+                  && stackedTooThin.childrenRect.height <= stackedTooThin.implicitHeight,
+                  "a taskbar too thin for two rows does not fall back to one")
+            check(stackedChartOnly.showValues && !stackedChartOnly.showCharts,
+                  "a stacked line in chart-only mode draws nothing: values="
+                  + stackedChartOnly.showValues + " charts=" + stackedChartOnly.showCharts)
+
+            // Two rows filled column by column, including mixed and odd pairs.
+            check(cellsOf(stackedSmallest).length === 6, "the stacked line does not hold six cells")
+            check(cellsOf(stackedMixed).length === 5, "hiding one metric does not leave five cells")
+            checkStackedColumns(stackedSmallest, "declared columns")
+            checkStackedColumns(stackedRepaired, "re-paired columns")
+            checkStackedColumns(stackedMixed, "mixed columns")
 
             if (problems.length === 0)
                 console.error("no jitter checks passed")
